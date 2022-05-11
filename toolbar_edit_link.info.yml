@@ -1,0 +1,5 @@
+name: Toolbar Edit Link
+core_version_requirement: ^8 || ^9
+description: Adds a link to the toolbar to edit the current node.
+package: Custom
+type: module

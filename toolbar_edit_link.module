@@ -34,7 +34,7 @@ function toolbar_edit_link_toolbar() {
             ],
             '#cache' => [
               'contexts' => [
-                'url',
+                'url.path',
               ],
             ],
           ],

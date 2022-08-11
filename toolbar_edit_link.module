@@ -36,6 +36,7 @@ function toolbar_edit_link_toolbar() {
               'contexts' => [
                 'url.path',
               ],
+              'max-age' => 0,
             ],
           ],
         ];

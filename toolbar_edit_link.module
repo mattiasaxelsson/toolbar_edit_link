@@ -1,48 +1,41 @@
 <?php
 
-use Drupal\Core\Url;
+/**
+ * @file
+ * The Toolbar Edit Link module adds a Edit Node link to the toolbar.
+ *
+ * This module also check if the user have access administration page
+ * and are on a node.
+ */
 
 /**
  * Implements hook_toolbar().
  */
 function toolbar_edit_link_toolbar() {
-  $items = [];
+  $node = \Drupal::routeMatch()->getParameter('node');
 
-  $manager = \Drupal::service('plugin.manager.menu.local_task');
-  $links = $manager->getLocalTasks(\Drupal::routeMatch()->getRouteName(), 0);
-  if (!empty($links)) {
-    $local_links = [];
-    foreach ($links['tabs'] as $route => $link) {
-      $local_links[$route] = $link['#link'];
-    }
-
-    foreach ($local_links as $route => $content) {
-      if ($route === 'entity.node.edit_form' && isset($content['title'])) {
-
-        $items['toolbar_edit_link'] = [
-          '#type' => 'toolbar_item',
-          'tab' => [
-            '#type' => 'link',
-            '#title' => t('Edit Page') . ' (' . $content['url']->getRouteParameters()['node'] . ')',
-            '#url' => Url::fromRoute('entity.node.edit_form', $content['url']->getRouteParameters()),
-            '#attributes' => [
-              'title' => t('Edit Page'),
-              'class' => [
-                'toolbar-icon',
-                'toolbar-icon-edit',
-              ],
-            ],
-            '#cache' => [
-              'contexts' => [
-                'url.path',
-              ],
-              'max-age' => 0,
-            ],
+  if ((\Drupal::currentUser()->hasPermission('access administration pages')) && (!empty($node))) {
+    $items = [];
+    $nid = $node->id();
+    $items['toolbar_edit_link'] = [
+      '#type' => 'toolbar_item',
+      'tab' => [
+        '#type' => 'link',
+        '#title' => t('Edit Node') . ' (' . $nid . ')',
+        '#url' => \Drupal\Core\Url::fromUri("internal:/node/" . $nid . "/edit"),
+        '#attributes' => [
+          'class' => [
+            'toolbar-icon',
+            'toolbar-icon-edit',
           ],
-        ];
-      }
-    }
+        ],
+        '#cache' => [
+          'contexts' => [
+            'url.path',
+          ],
+        ],
+      ],
+    ];
+    return $items;
   }
-
-  return $items;
 }
